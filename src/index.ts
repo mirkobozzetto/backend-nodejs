@@ -6,6 +6,13 @@ import dotenv from "dotenv";
 import express from "express";
 import http from "http";
 
+import { User } from "./entity/User";
+
+const drizzle = new Drizzle({
+  database: process.env.DATABASE_URL,
+  entities: [User],
+});
+
 dotenv.config();
 
 const app = express();
@@ -42,6 +49,8 @@ async function getPostgresVersion() {
   try {
     const response = await client.query("SELECT version()");
     console.log(response.rows[0]);
+  } catch (err) {
+    console.error("Error executing query", err.stack);
   } finally {
     client.release();
   }
