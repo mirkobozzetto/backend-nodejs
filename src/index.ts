@@ -6,12 +6,14 @@ import dotenv from "dotenv";
 import express from "express";
 import http from "http";
 
-import { User } from "./entity/User";
+import { drizzle } from "drizzle-orm/postgres-js";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
 
-const drizzle = new Drizzle({
-  database: process.env.DATABASE_URL,
-  entities: [User],
-});
+const sql = postgres("...", { max: 1 });
+const db = drizzle(sql);
+await migrate(db, { migrationsFolder: "drizzle" });
+await sql.end();
+console.error("Error executing query", (err as Error).stack);
 
 dotenv.config();
 
